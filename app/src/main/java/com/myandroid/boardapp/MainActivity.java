@@ -2,11 +2,13 @@ package com.myandroid.boardapp;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton addBtn;
 
+    private SwipeRefreshLayout swipMain;
+
     ListView listView;
     MyAdapter adapter;
     public static ArrayList<Board> boardArrayList = new ArrayList<>();
@@ -49,6 +53,23 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
 
         addBtn = findViewById(R.id.addBtn);
+
+        swipMain = findViewById(R.id.swipeMain);
+
+        swipMain.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                boardArrayList.clear();
+                retrieveData();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipMain.setRefreshing(false);
+                    }
+                }, 1000);
+            }
+        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
